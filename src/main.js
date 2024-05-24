@@ -8,6 +8,8 @@ import iziToast from 'izitoast';
 
 import 'izitoast/dist/css/iziToast.min.css';
 
+import axios from 'axios';
+
 //#endregion
 
 //#region imports
@@ -57,7 +59,7 @@ function showLoader() {
 
 refs.formEl.addEventListener('submit', handleFormSubmit);
 
-function handleFormSubmit(e) {
+async function handleFormSubmit(e) {
   e.preventDefault();
 
   refs.searchRes.innerHTML = '';
@@ -73,34 +75,28 @@ function handleFormSubmit(e) {
   }
 
   const query = e.target.elements.query.value.trim().toLowerCase();
-
-  getPhotos(query)
-    .then(data => {
-      if (data.length === 0) {
-        iziToast.error({
-          title: 'Error',
-          message:
-            'Sorry, there are no images matching your search query. Please try again!',
-        });
-      }
-      const markup = picturesTemplate(data);
-
-      refs.searchRes.innerHTML = markup;
-
-      lightbox.refresh();
-
-      hideLoader();
-    })
-    .catch(err => {
+  try {
+    const data = await getPhotos(query);
+    if (data.length === 0) {
       iziToast.error({
         title: 'Error',
-        message: err,
+        message:
+          'Sorry, there are no images matching your search query. Please try again!',
       });
-      hideLoader();
-    })
-    .finally(() => {
-      hideLoader();
-    });
+    }
+    const markup = picturesTemplate(data);
 
+    refs.searchRes.innerHTML = markup;
+
+    lightbox.refresh();
+
+    hideLoader();
+  } catch (error) {
+    iziToast.error({
+      title: 'Error',
+      message: error,
+    });
+    hideLoader();
+  }
   e.target.reset();
 }

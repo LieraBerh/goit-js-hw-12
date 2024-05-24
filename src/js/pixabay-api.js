@@ -4,9 +4,11 @@ import iziToast from 'izitoast';
 
 import 'izitoast/dist/css/iziToast.min.css';
 
+import axios from 'axios';
+
 //#endregion
 
-export function getPhotos(query) {
+export async function getPhotos(query) {
   const apiKey = '43995024-c8f5c7e28b3078307d7d8500b';
   const BASE_URL = 'https://pixabay.com';
   const END_POINT = '/api/';
@@ -21,20 +23,18 @@ export function getPhotos(query) {
 
   const url = `${BASE_URL}${END_POINT}?${params}`;
 
-  return fetch(url)
-    .then(response => {
-      if (!response.ok) {
-        throw new Error(response.status);
-      }
-      return response.json();
-    })
-    .then(pictures => {
-      return pictures.hits;
-    })
-    .catch(error => {
-      iziToast.error({
-        title: 'Error',
-        message: error,
-      });
+  try {
+    const response = await axios.get(url);
+    const { data } = response;
+    if (data && data.hits) {
+      return data.hits;
+    } else {
+      throw new Error('No data received from the server');
+    }
+  } catch (error) {
+    iziToast.error({
+      title: 'Error',
+      message: error.message,
     });
+  }
 }
