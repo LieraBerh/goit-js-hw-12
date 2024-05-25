@@ -18,11 +18,9 @@ import { getPhotos } from './js/pixabay-api';
 
 import { picturesTemplate } from './js/render-functions';
 
-import { currentPage } from './js/pixabay-api';
-
 //#endregion
 
-const refs = {
+export const refs = {
   formEl: document.querySelector('#searchForm'),
   inputEl: document.querySelector('#searchInput'),
   submitBtn: document.querySelector('#submitButton'),
@@ -50,23 +48,27 @@ const lightbox = new SimpleLightbox('#searchResults a', {
 
 document.addEventListener('DOMContentLoaded', hideLoader);
 
-function hideLoader() {
+export function hideLoader() {
   refs.loaderEl.classList.add('visually-hidden');
   refs.backdropEl.classList.add('visually-hidden');
 }
 
-function showLoader() {
+export function showLoader() {
   refs.loaderEl.classList.remove('visually-hidden');
   refs.backdropEl.classList.remove('visually-hidden');
 }
 
-function showLoadMore() {
+export function showLoadMore() {
   refs.loadMore.classList.remove('visually-hidden');
 }
 
-function hideLoadMore() {
+export function hideLoadMore() {
   refs.loadMore.classList.add('visually-hidden');
 }
+
+export let currentPage = 1;
+
+let query;
 
 refs.formEl.addEventListener('submit', handleFormSubmit);
 
@@ -85,7 +87,7 @@ async function handleFormSubmit(e) {
     return;
   }
 
-  const query = e.target.elements.query.value.trim().toLowerCase();
+  query = e.target.elements.query.value.trim().toLowerCase();
 
   try {
     const data = await getPhotos(query);
@@ -98,7 +100,7 @@ async function handleFormSubmit(e) {
     }
     const markup = picturesTemplate(data);
 
-    refs.searchRes.insertAdjacentHTML('beforeend', markup);
+    refs.searchRes.innerHTML = markup;
 
     lightbox.refresh();
 
@@ -119,7 +121,6 @@ refs.loadMore.addEventListener('click', handleLoadMoreClick);
 
 async function handleLoadMoreClick(e) {
   currentPage++;
-  const query = refs.inputEl.value.trim().toLowerCase();
   const data = await getPhotos(query);
   const markup = picturesTemplate(data);
 
