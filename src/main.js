@@ -75,6 +75,7 @@ async function handleFormSubmit(e) {
   }
 
   const query = e.target.elements.query.value.trim().toLowerCase();
+
   try {
     const data = await getPhotos(query);
     if (data.length === 0) {
