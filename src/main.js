@@ -18,6 +18,8 @@ import { getPhotos } from './js/pixabay-api';
 
 import { picturesTemplate } from './js/render-functions';
 
+import { currentPage } from './js/pixabay-api';
+
 //#endregion
 
 const refs = {
@@ -27,6 +29,7 @@ const refs = {
   searchRes: document.querySelector('#searchResults'),
   loaderEl: document.querySelector('.loader'),
   backdropEl: document.querySelector('.loader-backdrop'),
+  loadMore: document.querySelector('.js-btn-load'),
 };
 
 const lightbox = new SimpleLightbox('#searchResults a', {
@@ -55,6 +58,14 @@ function hideLoader() {
 function showLoader() {
   refs.loaderEl.classList.remove('visually-hidden');
   refs.backdropEl.classList.remove('visually-hidden');
+}
+
+function showLoadMore() {
+  refs.loadMore.classList.remove('visually-hidden');
+}
+
+function hideLoadMore() {
+  refs.loadMore.classList.add('visually-hidden');
 }
 
 refs.formEl.addEventListener('submit', handleFormSubmit);
@@ -87,11 +98,13 @@ async function handleFormSubmit(e) {
     }
     const markup = picturesTemplate(data);
 
-    refs.searchRes.innerHTML = markup;
+    refs.searchRes.insertAdjacentHTML('beforeend', markup);
 
     lightbox.refresh();
 
     hideLoader();
+
+    showLoadMore();
   } catch (error) {
     iziToast.error({
       title: 'Error',
@@ -100,4 +113,21 @@ async function handleFormSubmit(e) {
     hideLoader();
   }
   e.target.reset();
+}
+
+refs.loadMore.addEventListener('click', handleLoadMoreClick);
+
+async function handleLoadMoreClick(e) {
+  currentPage++;
+  const query = refs.inputEl.value.trim().toLowerCase();
+  const data = await getPhotos(query);
+  const markup = picturesTemplate(data);
+
+  refs.searchRes.insertAdjacentHTML('beforeend', markup);
+
+  lightbox.refresh();
+
+  hideLoader();
+
+  showLoadMore();
 }

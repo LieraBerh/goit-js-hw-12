@@ -8,7 +8,7 @@ import axios from 'axios';
 
 //#endregion
 
-let currentPage = 1;
+export let currentPage = 1;
 
 export async function getPhotos(query) {
   const apiKey = '43995024-c8f5c7e28b3078307d7d8500b';

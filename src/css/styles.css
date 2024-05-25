@@ -196,3 +196,8 @@ p {
 span {
   font-weight: 600;
 }
+.js-btn-load {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
