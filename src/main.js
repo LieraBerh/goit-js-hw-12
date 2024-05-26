@@ -68,12 +68,16 @@ export function hideLoadMore() {
 
 export let currentPage = 1;
 
+export let limit = 100;
+
 let query;
 
 refs.formEl.addEventListener('submit', handleFormSubmit);
 
 async function handleFormSubmit(e) {
   e.preventDefault();
+
+  currentPage = 1;
 
   refs.searchRes.innerHTML = '';
   showLoader();
@@ -91,14 +95,15 @@ async function handleFormSubmit(e) {
 
   try {
     const data = await getPhotos(query);
-    if (data.length === 0) {
+    const pictures = data.hits;
+    if (pictures.length === 0) {
       iziToast.error({
         title: 'Error',
         message:
           'Sorry, there are no images matching your search query. Please try again!',
       });
     }
-    const markup = picturesTemplate(data);
+    const markup = picturesTemplate(pictures);
 
     refs.searchRes.innerHTML = markup;
 
@@ -119,10 +124,27 @@ async function handleFormSubmit(e) {
 
 refs.loadMore.addEventListener('click', handleLoadMoreClick);
 
-async function handleLoadMoreClick(e) {
+async function handleLoadMoreClick() {
   currentPage++;
   const data = await getPhotos(query);
-  const markup = picturesTemplate(data);
+  const pictures = data.hits;
+  const markup = picturesTemplate(pictures);
+  const totalPages = Math.ceil(data.totalHits / limit);
+  const galleryItemHeight = refs.searchRes
+    .querySelector('.gallery-item')
+    .getBoundingClientRect().height;
+  window.scrollBy({
+    top: galleryItemHeight * 2,
+    behavior: 'smooth',
+  });
+
+  if (currentPage === totalPages) {
+    iziToast.error({
+      position: 'topRight',
+      message: 'This is the last page',
+    });
+    hideLoadMore();
+  }
 
   refs.searchRes.insertAdjacentHTML('beforeend', markup);
 

@@ -8,7 +8,7 @@ import axios from 'axios';
 
 //#endregion
 
-import { currentPage } from '../main';
+import { currentPage, limit } from '../main';
 
 export async function getPhotos(query) {
   const apiKey = '43995024-c8f5c7e28b3078307d7d8500b';
@@ -22,7 +22,7 @@ export async function getPhotos(query) {
     orientation: 'horizontal',
     safesearch: true,
     page: currentPage,
-    per_page: 15,
+    per_page: limit,
   });
 
   const url = `${BASE_URL}${END_POINT}?${params}`;
@@ -30,7 +30,7 @@ export async function getPhotos(query) {
   try {
     const response = await axios.get(url);
     const { data } = response;
-    return data.hits;
+    return data;
   } catch (error) {
     iziToast.error({
       title: 'Error',
