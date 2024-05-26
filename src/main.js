@@ -68,8 +68,6 @@ export function hideLoadMore() {
 
 export let currentPage = 1;
 
-export let limit = 100;
-
 let query;
 
 refs.formEl.addEventListener('submit', handleFormSubmit);
@@ -94,7 +92,7 @@ async function handleFormSubmit(e) {
   query = e.target.elements.query.value.trim().toLowerCase();
 
   try {
-    const data = await getPhotos(query);
+    const data = await getPhotos(query, currentPage);
     const pictures = data.hits;
     if (pictures.length === 0) {
       iziToast.error({
@@ -126,10 +124,10 @@ refs.loadMore.addEventListener('click', handleLoadMoreClick);
 
 async function handleLoadMoreClick() {
   currentPage++;
-  const data = await getPhotos(query);
+  const data = await getPhotos(query, currentPage);
   const pictures = data.hits;
   const markup = picturesTemplate(pictures);
-  const totalPages = Math.ceil(data.totalHits / limit);
+  const totalPages = Math.ceil(data.totalHits / 15);
   const galleryItemHeight = refs.searchRes
     .querySelector('.gallery-item')
     .getBoundingClientRect().height;
@@ -151,6 +149,4 @@ async function handleLoadMoreClick() {
   lightbox.refresh();
 
   hideLoader();
-
-  showLoadMore();
 }

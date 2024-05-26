@@ -8,9 +8,9 @@ import axios from 'axios';
 
 //#endregion
 
-import { currentPage, limit } from '../main';
+import { currentPage } from '../main';
 
-export async function getPhotos(query) {
+export async function getPhotos(query, currentPage) {
   const apiKey = '43995024-c8f5c7e28b3078307d7d8500b';
   const BASE_URL = 'https://pixabay.com';
   const END_POINT = '/api/';
@@ -22,7 +22,7 @@ export async function getPhotos(query) {
     orientation: 'horizontal',
     safesearch: true,
     page: currentPage,
-    per_page: limit,
+    per_page: 15,
   });
 
   const url = `${BASE_URL}${END_POINT}?${params}`;
