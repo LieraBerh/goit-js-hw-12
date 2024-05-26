@@ -20,7 +20,7 @@ import { picturesTemplate } from './js/render-functions';
 
 //#endregion
 
-export const refs = {
+const refs = {
   formEl: document.querySelector('#searchForm'),
   inputEl: document.querySelector('#searchInput'),
   submitBtn: document.querySelector('#submitButton'),
@@ -86,6 +86,7 @@ async function handleFormSubmit(e) {
       message: 'Please enter search parameters',
     });
     hideLoader();
+    hideLoadMore();
     return;
   }
 
@@ -100,6 +101,7 @@ async function handleFormSubmit(e) {
         message:
           'Sorry, there are no images matching your search query. Please try again!',
       });
+      hideLoadMore();
     }
     const markup = picturesTemplate(pictures);
 
@@ -107,14 +109,15 @@ async function handleFormSubmit(e) {
 
     lightbox.refresh();
 
-    hideLoader();
-
-    showLoadMore();
+    if (data.totalHits > 15) {
+      showLoadMore();
+    }
   } catch (error) {
     iziToast.error({
       title: 'Error',
       message: error,
     });
+  } finally {
     hideLoader();
   }
   e.target.reset();
