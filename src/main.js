@@ -131,13 +131,6 @@ async function handleLoadMoreClick() {
   const pictures = data.hits;
   const markup = picturesTemplate(pictures);
   const totalPages = Math.ceil(data.totalHits / 15);
-  const galleryItemHeight = refs.searchRes
-    .querySelector('.gallery-item')
-    .getBoundingClientRect().height;
-  window.scrollBy({
-    top: galleryItemHeight * 2,
-    behavior: 'smooth',
-  });
 
   if (currentPage === totalPages) {
     iziToast.error({
@@ -148,6 +141,14 @@ async function handleLoadMoreClick() {
   }
 
   refs.searchRes.insertAdjacentHTML('beforeend', markup);
+
+  const galleryItemHeight = refs.searchRes
+    .querySelector('.gallery-item')
+    .getBoundingClientRect().height;
+  window.scrollBy({
+    top: galleryItemHeight * 2,
+    behavior: 'smooth',
+  });
 
   lightbox.refresh();
 
